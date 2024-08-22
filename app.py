@@ -21,5 +21,9 @@ def makersuite():
     r = palm.chat(messages=q, **model)
     return render_template("makersuite.html", r=r.last)
 
-if __name__ = "__main__":
+@app.route("/sg_joke", methods=["GET","POST"])
+def sg_joke():
+    return render_template("sg_joke.html")
+
+if __name__ == "__main__":
     app.run()
