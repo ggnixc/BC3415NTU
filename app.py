@@ -1,29 +1,41 @@
-from flask import Flask, render_template, request
-import google.generativeai as palm
+from flask import Flask,render_template,request
+import google.generativeai as genai
+import os
+import textblob
 
-api = "AIzaSyCaQcgKn95ZO6AR1t2PXzk9UydTkt4sWZQ"
-palm.configure(api_key=api)
-model = {"model": "models/chat-bison-001"}
+api = os.getenv("MAKERSUITE")
+genai.configure(api_key=api)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
-app = Flask(__name__, template_folder = ".") #template folder = "." sets the search for the template folder to current folder
+app = Flask(__name__)
 
-@app.route("/", methods=["GET","POST"])
+@app.route("/",methods=["GET","POST"])
 def index():
-    return render_template("index.html")
+    return(render_template("index.html"))
 
-@app.route("/financial_FAQ", methods=["GET","POST"])
+@app.route("/financial_FAQ",methods=["GET","POST"])
 def financial_FAQ():
-    return render_template("financial_FAQ.html")
+    return(render_template("financial_FAQ.html"))
 
-@app.route("/makersuite", methods=["GET","POST"])
+@app.route("/makersuite",methods=["GET","POST"])
 def makersuite():
     q = request.form.get("q")
-    r = palm.chat(messages=q, **model)
-    return render_template("makersuite.html", r=r.last)
+    r = model.generate_content(q)
+    return(render_template("makersuite.html",r=r.text))
 
-@app.route("/sg_joke", methods=["GET","POST"])
-def sg_joke():
-    return render_template("sg_joke.html")
+@app.route("/sentiment_analysis",methods=["GET","POST"])
+def sentiment_analysis():
+    return(render_template("sentiment_analysis.html"))
+
+@app.route("/sentiment_analysis_result",methods=["GET","POST"])
+def sentiment_analysis_result():
+    q = request.form.get("q")
+    r = textblob.Textblob(q).sentiment
+    return(render_template("sentiment_analysis_result.html",r=r))
+
+@app.route("/transfer_money",methods=["GET","POST"])
+def transfer_money():
+    return(render_template("transfer_money.html"))
 
 if __name__ == "__main__":
     app.run()
