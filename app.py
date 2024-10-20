@@ -1,9 +1,7 @@
 from flask import Flask,render_template,request
 import google.generativeai as genai
 import os
-pip install -U textblob
-python -m textblob.download_corpora
-import textblob
+from textblob import TextBlob
 
 api = os.getenv("MAKERSUITE")
 genai.configure(api_key=api)
